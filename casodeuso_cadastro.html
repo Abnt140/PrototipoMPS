@@ -100,33 +100,41 @@
     <div class="step" id="step1">
       <h1 class="titulo">Acontecendo agora.</h1>
 
+      <div class="cadastro-social">
+        <button class="btn btn-escuro btn-social-cadastro" onclick="loginGoogle()">Cadastrar com Google</button>
+        <button class="btn btn-escuro btn-social-cadastro" onclick="loginApple()">Cadastrar com Apple</button>
+      </div>
+
+      <div class="separador separador-cadastro">ou preencha seus dados</div>
+
       <div class="campo">
         <label>Nome de perfil</label>
-        <input type="text" id="inp-nome" placeholder="Exemplo Nome" maxlength="50" oninput="limpaMsgErro(this)"/>
+        <input type="text" id="inp-nome" placeholder="Exemplo Nome" maxlength="15" oninput="limpaMsgErro(this)"/>
         <div class="msg-erro" id="err-nome">Informe seu nome de perfil.</div>
       </div>
 
       <div class="campo">
-        <label>Username</label>
+        <label>Nome de usuário</label>
         <input type="text" id="inp-user" placeholder="nameuser11" maxlength="15" oninput="limpaMsgErro(this)"/>
-        <div class="msg-erro" id="err-user">Mínimo 4 caracteres. Apenas letras, números e _.</div>
+        <div class="msg-erro" id="err-user">Informe seu nome de usuário.</div>
       </div>
 
       <div class="campo">
-        <label>Email</label>
+        <label>E-mail</label>
         <input type="email" id="inp-email" placeholder="alunomps2026@uea.edu.br" oninput="limpaMsgErro(this)"/>
-        <div class="msg-erro" id="err-email">Informe um e-mail válido.</div>
+        <div class="msg-erro" id="err-email">Por favor, insira um endereço de e-mail válido (Ex: nome@dominio.com).</div>
       </div>
 
       <div class="campo">
         <label>Telefone</label>
-        <input type="tel" id="inp-tel" placeholder="+99 (99) 99999-9999" oninput="mascaraTel(this);limpaMsgErro(this)"/>
+        <input type="tel" id="inp-tel" placeholder="+55 (92) 99999-9999" oninput="mascaraTel(this);limpaMsgErro(this)"/>
+        <div class="msg-erro" id="err-tel">Informe seu telefone celular.</div>
       </div>
 
       <div class="campo">
         <label>Data de Nascimento</label>
         <input type="text" id="inp-nasc" placeholder="01/01/2000" maxlength="10" oninput="mascaraData(this);limpaMsgErro(this)"/>
-        <div class="msg-erro" id="err-nasc">Data inválida ou idade mínima de 13 anos.</div>
+        <div class="msg-erro" id="err-nasc">Cadastro não permitido para menores de 18 anos</div>
       </div>
 
       <button class="btn btn-branco" onclick="validaPasso1()">Continuar</button>
@@ -139,7 +147,7 @@
       <div class="campo" style="margin-top:32px;">
         <label>Senha</label>
         <input type="password" id="inp-senha" placeholder="••••••••••" maxlength="128" oninput="limpaMsgErro(this)"/>
-        <div class="msg-erro" id="err-senha">Mínimo de 8 caracteres.</div>
+        <div class="msg-erro" id="err-senha">A senha deve conter no mínimo 8 caracteres</div>
       </div>
 
       <div class="campo">
@@ -165,7 +173,7 @@
   </div>
 </div>
 
-<!-- ══ LOGIN SOCIAL SIMULADO ══ -->
+<!-- ══ LOGIN SOCIAL ══ -->
 <div id="social-login-modal" class="social-modal escondido" aria-hidden="true">
   <div class="social-card">
     <button class="social-fechar" onclick="fecharLoginSocial()" aria-label="Fechar">×</button>
@@ -173,20 +181,17 @@
     <div class="social-topo">
       <div class="social-icone" id="social-icone">G</div>
       <div>
-        <p class="social-label">Login demonstrativo</p>
+        <p class="social-label">Cadastro/Login</p>
         <h2 id="social-titulo">Entrar com Google</h2>
       </div>
     </div>
 
-    <p class="social-aviso">
-      Esta tela é apenas uma simulação para apresentação acadêmica. Nenhuma API oficial será chamada.
-    </p>
 
     <button class="social-conta" onclick="confirmarLoginSocial()">
       <div class="social-avatar" id="social-avatar">G</div>
       <div class="social-dados">
         <strong id="social-nome">Usuário Google</strong>
-        <span id="social-email">usuario.google.demo@gmail.com</span>
+        <span id="social-email">usuario.google@gmail.com</span>
       </div>
       <span class="social-seta">›</span>
     </button>

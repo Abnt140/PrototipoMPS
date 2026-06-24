@@ -6,6 +6,13 @@ let usuario_logado = null
 let login_val_temp = ''
 let provedor_social_temp = null
 
+const UC_01_M_01 = 'Esse e-mail já está vinculado à uma conta'
+const UC_01_M_02 = 'Cadastro não permitido para menores de 18 anos'
+const UC_01_M_03 = 'A senha deve conter no mínimo 8 caracteres'
+const UC_01_M_04 = 'O campo [Nome do Campo] contém caracteres especiais não permitidos. Por favor, utilize apenas letras e números.'
+const UC_01_M_05 = 'Conta criada com sucesso!'
+const regex_caracteres_invalidos = /[~$#@\-%,&*¨()"'<>:;^{}ºª\[\]=+]/
+
 const posts_exemplo = [
   {
     id: 1,
@@ -47,10 +54,26 @@ function user_existe(user) {
   return le_banco().some(u => u.username === user.toLowerCase())
 }
 
+function proximo_id_usuario(lista) {
+  let maior = lista.reduce((max, u) => {
+    let id = Number(u.id)
+    return Number.isInteger(id) && id > max ? id : max
+  }, 0)
+  return maior + 1
+}
+
 function insere_usuario(novo) {
   let lista = le_banco()
-  lista.push({ ...novo, id: Date.now() })
+  let agora = new Date().toISOString()
+  let usuario = {
+    ...novo,
+    id: proximo_id_usuario(lista),
+    criado_em: agora,
+    atualizado_em: agora
+  }
+  lista.push(usuario)
   salva_banco(lista)
+  return usuario
 }
 
 function busca_usuario(login_val) {
@@ -164,19 +187,25 @@ function fazerLogin() {
   entrarNoFeed()
 }
 
-const contas_sociais_demo = {
+const contas_sociais = {
   google: {
     nome_perfil: 'Usuário Google',
-    username: 'usuario_google_demo',
-    email: 'usuario.google.demo@gmail.com',
+    username: 'usuario_google',
+    email: 'usuario.google@gmail.com',
+    telefone: '+55 (92) 99999-0001',
+    data_nasc: '01/01/2000',
+    senha_acesso: 'SenhaGoogle123',
     provedor: 'google',
     icone: 'G',
     titulo: 'Entrar com Google'
   },
   apple: {
     nome_perfil: 'Usuário Apple',
-    username: 'usuario_apple_demo',
-    email: 'usuario.apple.demo@icloud.com',
+    username: 'usuario_apple',
+    email: 'usuario.apple@icloud.com',
+    telefone: '+55 (92) 99999-0002',
+    data_nasc: '01/01/2000',
+    senha_acesso: 'SenhaApple123',
     provedor: 'apple',
     icone: '',
     titulo: 'Entrar com Apple'
@@ -192,7 +221,7 @@ function loginApple() {
 }
 
 function abrirLoginSocial(provedor) {
-  let conta = contas_sociais_demo[provedor]
+  let conta = contas_sociais[provedor]
   if (!conta) return
 
   provedor_social_temp = provedor
@@ -216,26 +245,29 @@ function fecharLoginSocial() {
 }
 
 function confirmarLoginSocial() {
-  let conta = contas_sociais_demo[provedor_social_temp]
+  let conta = contas_sociais[provedor_social_temp]
   if (!conta) return
 
-  let usuarioDemo = {
-    id: 'demo-' + conta.provedor,
-    nome_perfil: conta.nome_perfil,
-    username: conta.username,
-    email: conta.email,
-    tel: null,
-    data_nasc: null,
-    senha: null,
-    status: 'ativo',
-    provedor: conta.provedor,
-    login_demo: true
+  let usuarioSocial = busca_usuario(conta.email)
+
+  if (!usuarioSocial) {
+    usuarioSocial = insere_usuario({
+      nome_perfil: conta.nome_perfil,
+      username: conta.username,
+      email: conta.email.toLowerCase(),
+      tel: conta.telefone,
+      data_nasc: conta.data_nasc,
+      senha: hash_senha(conta.senha_acesso),
+      status: 'ativo',
+      provedor: conta.provedor,
+      login_social: true
+    })
   }
 
-  usuario_logado = usuarioDemo
-  salva_sessao(usuarioDemo)
+  usuario_logado = usuarioSocial
+  salva_sessao(usuarioSocial)
   fecharLoginSocial()
-  mostraToast('Login com ' + (conta.provedor === 'google' ? 'Google' : 'Apple') + ' realizado em modo demonstração.', false)
+  mostraToast('UC_01_M_05: ' + UC_01_M_05, false)
   entrarNoFeed()
 }
 
@@ -250,58 +282,133 @@ function fazerRecuperacao() {
     marcaErro('inp-rec-email', 'err-rec', 'UC_02_M_02: E-mail não encontrado.')
     return
   }
-  mostraToast('E-mail de recuperação enviado (simulado). recuperarSenha(email): void', false)
+  mostraToast('E-mail de recuperação enviado.', false)
   setTimeout(() => irPasso('step-recuperacao', 'step0'), 2000)
+}
+
+function possuiCaracterInvalido(valor) {
+  return regex_caracteres_invalidos.test(valor)
+}
+
+function msgCaracterInvalido(nomeCampo) {
+  return UC_01_M_04.replace('[Nome do Campo]', nomeCampo)
+}
+
+function emailValido(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+}
+
+function telefoneValido(tel) {
+  let digitos = tel.replace(/\D/g, '')
+  return digitos.length >= 12 && digitos.length <= 13
+}
+
+function parseDataBR(valor) {
+  let partes = valor.split('/')
+  if (partes.length !== 3) return null
+
+  let dia = Number(partes[0])
+  let mes = Number(partes[1])
+  let ano = Number(partes[2])
+  if (!dia || !mes || !ano) return null
+
+  let data = new Date(ano, mes - 1, dia)
+  if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) return null
+  return data
+}
+
+function idadeEmAnos(dataNascimento) {
+  let hoje = new Date()
+  let idade = hoje.getFullYear() - dataNascimento.getFullYear()
+  let mesAtual = hoje.getMonth()
+  let diaAtual = hoje.getDate()
+  let mesNasc = dataNascimento.getMonth()
+  let diaNasc = dataNascimento.getDate()
+
+  if (mesAtual < mesNasc || (mesAtual === mesNasc && diaAtual < diaNasc)) idade--
+  return idade
 }
 
 function validaPasso1() {
   let nome  = pega('inp-nome')
   let user  = pega('inp-user')
   let email = pega('inp-email')
+  let tel   = pega('inp-tel')
   let nasc  = pega('inp-nasc')
   let ok = true
 
-  if (!nome) { marcaErro('inp-nome', 'err-nome', 'Informe seu nome de perfil.'); ok = false }
+  if (!nome) {
+    marcaErro('inp-nome', 'err-nome', 'Informe seu nome de perfil.')
+    ok = false
+  } else if (nome.length > 15) {
+    marcaErro('inp-nome', 'err-nome', 'O nome de perfil deve ter no máximo 15 caracteres.')
+    ok = false
+  } else if (possuiCaracterInvalido(nome)) {
+    marcaErro('inp-nome', 'err-nome', msgCaracterInvalido('Nome de perfil'))
+    ok = false
+  }
 
-  if (!/^[a-zA-Z0-9_]{4,15}$/.test(user)) {
-    marcaErro('inp-user', 'err-user', 'Mínimo 4 caracteres. Apenas letras, números e _.'); ok = false
+  if (!user) {
+    marcaErro('inp-user', 'err-user', 'Informe seu nome de usuário.')
+    ok = false
+  } else if (user.length > 15) {
+    marcaErro('inp-user', 'err-user', 'O nome de usuário deve ter no máximo 15 caracteres.')
+    ok = false
+  } else if (!/^[a-zA-Z0-9_]+$/.test(user) || possuiCaracterInvalido(user)) {
+    marcaErro('inp-user', 'err-user', msgCaracterInvalido('Nome de usuário'))
+    ok = false
   } else if (user_existe(user)) {
-    marcaErro('inp-user', 'err-user', 'Username já em uso.'); ok = false
+    marcaErro('inp-user', 'err-user', 'Nome de usuário já em uso.')
+    ok = false
   }
 
-  if (!email || !email.includes('@') || !email.includes('.')) {
-    marcaErro('inp-email', 'err-email', 'Informe um e-mail válido.'); ok = false
+  if (!email || !emailValido(email)) {
+    marcaErro('inp-email', 'err-email', 'Por favor, insira um endereço de e-mail válido (Ex: nome@dominio.com).')
+    ok = false
   } else if (email_existe(email)) {
-    marcaErro('inp-email', 'err-email', 'UC_01_M_01 — E-mail já cadastrado.')
-    mostraToast('UC_01_M_01: E-mail já vinculado a outra conta.', true); ok = false
+    marcaErro('inp-email', 'err-email', UC_01_M_01)
+    mostraToast('UC_01_M_01: ' + UC_01_M_01, true)
+    ok = false
   }
 
-  if (nasc) {
-    let partes = nasc.split('/')
-    if (partes.length === 3) {
-      let d = new Date(`${partes[2]}-${partes[1]}-${partes[0]}`)
-      let idade = (Date.now() - d) / (365.25 * 24 * 3600 * 1000)
-      if (isNaN(d.getTime()) || idade < 13) {
-        marcaErro('inp-nasc', 'err-nasc', 'Data inválida ou idade mínima de 13 anos.'); ok = false
-      }
-    } else {
-      marcaErro('inp-nasc', 'err-nasc', 'Formato: DD/MM/AAAA'); ok = false
-    }
-  } else {
-    marcaErro('inp-nasc', 'err-nasc', 'Informe sua data de nascimento.'); ok = false
+  if (!tel || !telefoneValido(tel)) {
+    marcaErro('inp-tel', 'err-tel', 'Informe seu telefone celular no formato +55 (99) 99999-9999.')
+    ok = false
+  }
+
+  let dataNascimento = parseDataBR(nasc)
+  if (!nasc || !dataNascimento) {
+    marcaErro('inp-nasc', 'err-nasc', 'Informe uma data válida no formato DD/MM/AAAA.')
+    ok = false
+  } else if (idadeEmAnos(dataNascimento) < 18) {
+    document.getElementById('inp-nasc').value = ''
+    marcaErro('inp-nasc', 'err-nasc', UC_01_M_02)
+    mostraToast('UC_01_M_02: ' + UC_01_M_02, true)
+    ok = false
   }
 
   if (ok) irPasso('step1', 'step2')
 }
 
 function validaPasso2() {
-  let senha = document.getElementById('inp-senha').value
-  let conf  = document.getElementById('inp-conf').value
-  let ok = true
+  let senhaInput = document.getElementById('inp-senha')
+  let confInput  = document.getElementById('inp-conf')
+  let senha = senhaInput.value
+  let conf  = confInput.value
 
-  if (senha.length < 8) { marcaErro('inp-senha', 'err-senha', 'Mínimo de 8 caracteres.'); ok = false }
-  if (senha !== conf)   { marcaErro('inp-conf', 'err-conf', 'As senhas não coincidem.'); ok = false }
-  if (!ok) return
+  if (senha.length < 8) {
+    senhaInput.value = ''
+    confInput.value = ''
+    marcaErro('inp-senha', 'err-senha', UC_01_M_03)
+    marcaErro('inp-conf', 'err-conf', 'Confirme a senha novamente.')
+    mostraToast('UC_01_M_03: ' + UC_01_M_03, true)
+    return
+  }
+
+  if (senha !== conf) {
+    marcaErro('inp-conf', 'err-conf', 'As senhas não coincidem.')
+    return
+  }
 
   let btn = document.querySelector('#step2 .btn')
   btn.disabled = true
@@ -310,22 +417,34 @@ function validaPasso2() {
   setTimeout(() => {
     let novo = {
       nome_perfil: pega('inp-nome'),
-      username:    pega('inp-user'),
+      username:    pega('inp-user').toLowerCase(),
       email:       pega('inp-email').toLowerCase(),
-      tel:         pega('inp-tel') || null,
+      tel:         pega('inp-tel'),
       data_nasc:   pega('inp-nasc'),
       senha:       hash_senha(senha),
-      status:      'ativo'
+      status:      'ativo',
+      provedor:    'cadastro_manual'
     }
     insere_usuario(novo)
-    mostraToast('Conta criada! Faça login para continuar.', false)
+    mostraToast('UC_01_M_05: ' + UC_01_M_05, false)
 
     setTimeout(() => {
       btn.disabled = false
       btn.textContent = 'Continuar'
+      limparCamposCadastro()
       voltarParaLogin()
     }, 1200)
   }, 1000)
+}
+
+function limparCamposCadastro() {
+  ['inp-nome', 'inp-user', 'inp-email', 'inp-tel', 'inp-nasc', 'inp-senha', 'inp-conf'].forEach(id => {
+    let el = document.getElementById(id)
+    if (el) {
+      el.value = ''
+      limpaMsgErro(el)
+    }
+  })
 }
 
 function voltarParaLogin() {

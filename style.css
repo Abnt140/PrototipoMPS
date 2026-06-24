@@ -135,7 +135,7 @@ body {
 .btn-azul { background: var(--azul); color: var(--branco); }
 .btn-azul:hover:not(:disabled) { background: #1a8cd8; }
 
-/* botão google com avatar simulado */
+/* botão google com avatar */
 .btn-google { justify-content: space-between; padding: 10px 16px; }
 .btn-google .google-btn-content { flex: 1; text-align: center; }
 .google-user-info { display: flex; align-items: center; gap: 10px; }
@@ -557,4 +557,29 @@ body {
 .trend-more {
   position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
   color: var(--cinza); font-size: 18px; letter-spacing: 2px;
+}
+
+/* Ajustes do UC_01: cadastro social */
+.cadastro-social {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.btn-social-cadastro {
+  padding: 11px 14px;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.separador-cadastro {
+  margin: 10px 0 18px;
+  font-size: 12px;
+}
+
+@media (max-width: 560px) {
+  .cadastro-social {
+    grid-template-columns: 1fr;
+  }
 }
