@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>X</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div id="toast"></div>
+<span class="uc-badge" id="uc-badge">UC_01 — Cadastro</span>
+
+<!-- ══ TELA SPLIT (cadastro + login) ══ -->
+<div id="tela-auth">
+  <div class="left">
+
+    <!-- STEP 0: Landing / Login -->
+    <div class="step active" id="step0">
+      <h1 class="titulo">Acontecendo agora.</h1>
+
+      <button class="btn btn-escuro btn-google" onclick="loginGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        <span class="google-btn-content" id="google-btn-txt">Continuar com o Google</span>
+        <svg class="google-logo" width="20" height="20" viewBox="0 0 24 24" id="google-g-icon" style="display:none">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+      </button>
+
+      <button class="btn btn-escuro" onclick="loginApple()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        Continuar com a Apple
+      </button>
+
+      <div class="separador">ou</div>
+
+      <div class="campo">
+        <input type="text" placeholder="Email ou nome de usuário" id="inp-login-val" oninput="checaLoginVal()"/>
+        <div class="msg-erro" id="err-login-val">Informe o e-mail ou username.</div>
+      </div>
+
+      <button class="btn btn-cinza" id="btn-continuar-login" disabled onclick="irParaSenha()">
+        Continuar
+      </button>
+
+      <div class="rodape-links">
+        <a onclick="irCadastro()">Criar conta</a>
+        <span style="color:#6e767d">|</span>
+        <a onclick="irRecuperacao()">Esqueceu a senha</a>
+      </div>
+    </div>
+
+    <!-- STEP: Senha do login -->
+    <div class="step" id="step-senha-login">
+      <h1 class="titulo">Insira sua senha.</h1>
+
+      <div class="campo" style="margin-top: 32px;">
+        <input type="password" id="inp-senha-login" placeholder="Senha" oninput="checaSenhaLogin()"/>
+        <div class="msg-erro" id="err-senha-login">Senha incorreta.</div>
+      </div>
+
+      <button class="btn btn-cinza" id="btn-fazer-login" disabled onclick="fazerLogin()">
+        Continuar
+      </button>
+
+      <div class="rodape-links">
+        <a onclick="irCadastro()">Criar conta</a>
+        <span style="color:#6e767d">|</span>
+        <a onclick="irRecuperacao()">Esqueceu a senha</a>
+      </div>
+    </div>
+
+    <!-- STEP: Recuperação de senha -->
+    <div class="step" id="step-recuperacao">
+      <h1 class="titulo">Recuperar senha.</h1>
+
+      <div class="campo" style="margin-top: 32px;">
+        <input type="email" id="inp-rec-email" placeholder="Seu e-mail cadastrado" oninput="limpaMsgErro(this)"/>
+        <div class="msg-erro" id="err-rec">E-mail não encontrado.</div>
+      </div>
+
+      <button class="btn btn-branco" onclick="fazerRecuperacao()">Enviar</button>
+
+      <div class="rodape-links">
+        <a onclick="irPasso('step-recuperacao','step0')">Voltar</a>
+      </div>
+    </div>
+
+    <!-- STEP: Cadastro 1 - Dados -->
+    <div class="step" id="step1">
+      <h1 class="titulo">Acontecendo agora.</h1>
+
+      <div class="campo">
+        <label>Nome de perfil</label>
+        <input type="text" id="inp-nome" placeholder="Exemplo Nome" maxlength="50" oninput="limpaMsgErro(this)"/>
+        <div class="msg-erro" id="err-nome">Informe seu nome de perfil.</div>
+      </div>
+
+      <div class="campo">
+        <label>Username</label>
+        <input type="text" id="inp-user" placeholder="nameuser11" maxlength="15" oninput="limpaMsgErro(this)"/>
+        <div class="msg-erro" id="err-user">Mínimo 4 caracteres. Apenas letras, números e _.</div>
+      </div>
+
+      <div class="campo">
+        <label>Email</label>
+        <input type="email" id="inp-email" placeholder="alunomps2026@uea.edu.br" oninput="limpaMsgErro(this)"/>
+        <div class="msg-erro" id="err-email">Informe um e-mail válido.</div>
+      </div>
+
+      <div class="campo">
+        <label>Telefone</label>
+        <input type="tel" id="inp-tel" placeholder="+99 (99) 99999-9999" oninput="mascaraTel(this);limpaMsgErro(this)"/>
+      </div>
+
+      <div class="campo">
+        <label>Data de Nascimento</label>
+        <input type="text" id="inp-nasc" placeholder="01/01/2000" maxlength="10" oninput="mascaraData(this);limpaMsgErro(this)"/>
+        <div class="msg-erro" id="err-nasc">Data inválida ou idade mínima de 13 anos.</div>
+      </div>
+
+      <button class="btn btn-branco" onclick="validaPasso1()">Continuar</button>
+    </div>
+
+    <!-- STEP: Cadastro 2 - Senha -->
+    <div class="step" id="step2">
+      <h1 class="titulo">Acontecendo agora.</h1>
+
+      <div class="campo" style="margin-top:32px;">
+        <label>Senha</label>
+        <input type="password" id="inp-senha" placeholder="••••••••••" maxlength="128" oninput="limpaMsgErro(this)"/>
+        <div class="msg-erro" id="err-senha">Mínimo de 8 caracteres.</div>
+      </div>
+
+      <div class="campo">
+        <label>Confirmar senha</label>
+        <input type="password" id="inp-conf" placeholder="••••••••••" maxlength="128" oninput="limpaMsgErro(this)"/>
+        <div class="msg-erro" id="err-conf">As senhas não coincidem.</div>
+      </div>
+
+      <button class="btn btn-branco" style="margin-top:60px;" onclick="validaPasso2()">Continuar</button>
+    </div>
+
+  </div>
+
+  <div class="right">
+    <div class="fundo-x">
+      <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 35 25 L 265 275" stroke="white" stroke-width="52" stroke-linecap="square" opacity="0.13"/>
+        <path d="M 265 25 L 35 275" stroke="white" stroke-width="52" stroke-linecap="square" opacity="0.13"/>
+        <path d="M 35 25 L 265 275" stroke="black" stroke-width="34" stroke-linecap="square"/>
+        <path d="M 265 25 L 35 275" stroke="black" stroke-width="34" stroke-linecap="square"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOGIN SOCIAL SIMULADO ══ -->
+<div id="social-login-modal" class="social-modal escondido" aria-hidden="true">
+  <div class="social-card">
+    <button class="social-fechar" onclick="fecharLoginSocial()" aria-label="Fechar">×</button>
+
+    <div class="social-topo">
+      <div class="social-icone" id="social-icone">G</div>
+      <div>
+        <p class="social-label">Login demonstrativo</p>
+        <h2 id="social-titulo">Entrar com Google</h2>
+      </div>
+    </div>
+
+    <p class="social-aviso">
+      Esta tela é apenas uma simulação para apresentação acadêmica. Nenhuma API oficial será chamada.
+    </p>
+
+    <button class="social-conta" onclick="confirmarLoginSocial()">
+      <div class="social-avatar" id="social-avatar">G</div>
+      <div class="social-dados">
+        <strong id="social-nome">Usuário Google</strong>
+        <span id="social-email">usuario.google.demo@gmail.com</span>
+      </div>
+      <span class="social-seta">›</span>
+    </button>
+
+    <button class="social-cancelar" onclick="fecharLoginSocial()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ TELA FEED ══ -->
+<div id="tela-feed" style="display:none;">
+
+  <!-- Sidebar esquerda -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+      </svg>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Página Principal
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        Pesquisar
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        Notificações
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Seguindo
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        Mensagens
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+        IA
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+        Salvos
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>
+        Premium
+      </a>
+      <a class="nav-item" id="nav-perfil" href="#">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        Perfil
+      </a>
+      <a class="nav-item nav-mais" href="#">
+        <span style="font-size:20px;letter-spacing:2px">•••</span>
+      </a>
+    </nav>
+    <button class="btn-postar-side" onclick="abrirComposer()">Postar</button>
+    <button class="btn-voltar-login" onclick="sairParaLogin()">Voltar para login</button>
+  </aside>
+
+  <!-- Centro: Feed -->
+  <main class="feed-main">
+    <div class="feed-tabs">
+      <div class="feed-tab active">Feed</div>
+      <div class="feed-tab">Seguindo</div>
+    </div>
+
+    <!-- Composer -->
+    <div class="composer">
+      <div class="composer-avatar">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="#555">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+        </svg>
+      </div>
+      <div class="composer-right">
+        <input class="composer-input" id="composer-input" type="text" placeholder="O que está acontecendo?" maxlength="280" oninput="checaComposer()"/>
+        <div class="composer-actions">
+          <div class="composer-icons">
+            <span title="Imagem">🖼</span>
+            <span title="GIF">GIF</span>
+            <span title="Emoji">☺</span>
+            <span title="Enquete">📊</span>
+            <span title="Agenda">📅</span>
+            <span title="Local">📍</span>
+          </div>
+          <button class="btn-postar-composer" id="btn-postar" disabled onclick="postarTweet()">Postar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Posts -->
+    <div id="lista-posts"></div>
+  </main>
+
+  <!-- Sidebar direita -->
+  <aside class="sidebar-right">
+    <div class="search-bar">
+      <input type="text" placeholder="Value"/>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="#6e767d"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="#6e767d" style="margin-left:auto"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+    </div>
+
+    <div class="trends-box">
+      <div class="trends-tabs">
+        <span class="trends-tab active">Para você</span>
+        <span class="trends-tab">Assuntos do Momento</span>
+        <span class="trends-tab">Notícias</span>
+      </div>
+      <div class="trend-item">
+        <div class="trend-cat">Política · Assunto do Momento</div>
+        <div class="trend-nome">Reunião</div>
+        <span class="trend-more">···</span>
+      </div>
+      <div class="trend-item">
+        <div class="trend-cat">Música · Assunto do Momento</div>
+        <div class="trend-nome">Melody</div>
+        <span class="trend-more">···</span>
+      </div>
+      <div class="trend-item">
+        <div class="trend-cat">Assunto do Momento em Brasil</div>
+        <div class="trend-nome" style="font-weight:800">VIDA ALÉM DO TRABALHOJÁ</div>
+        <span class="trend-more">···</span>
+      </div>
+      <div class="trend-item">
+        <div class="trend-cat">Esporte · Assunto do Momento</div>
+        <div class="trend-nome">Tiaguinho</div>
+        <span class="trend-more">···</span>
+      </div>
+      <div class="trend-item">
+        <div class="trend-cat">Esporte · Assunto do Momento</div>
+        <div class="trend-nome">Tiaguinho</div>
+        <span class="trend-more">···</span>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
